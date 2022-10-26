@@ -1,8 +1,9 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// SPDX-License-Identifier: MIT
-
+import "./Struct.sol";
 //import the ERC20 interface
+
 interface IERC20 {
     function totalSupply() external view returns (uint);
     function balanceOf(address account) external view returns (uint);
@@ -20,6 +21,7 @@ interface IERC20 {
 
 
 //import pancakeswap router
+
 interface IPancakeRouter01 {
     function factory() external pure returns (address);
     function WETH() external pure returns (address);
@@ -155,56 +157,43 @@ interface IPancakeRouter02 is IPancakeRouter01 {
     ) external;
 }
 
-interface IPancakeV2Pair {
-  function token0() external view returns (address);
-  function token1() external view returns (address);
-  function swap(
-    uint256 amount0Out,
-    uint256 amount1Out,
-    address to,
-    bytes calldata data
-  ) external;
-}
-
-interface IPancakeV2Factory {
-  function getPair(address token0, address token1) external returns (address);
-}
-
-
 //main contract
 
 contract DCApp{
 
+
+    mapping (address => userData[]) public mapDCA;
     //address of the pancakeswap v2 router
     address private constant PANCAKEV2ROUTER = 0x10ED43C718714eb63d5aA57B78B54704E256024E;
 
     //address of WBNB token.  This is needed because some times it is better to trade through WBNB. 
     address private constant WBNB = 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c;
     
+
     function swap(address _tokenIn, address _tokenOut, uint256 _amountIn, uint256 _amountOutMin, address _to) external {
       
-    //first we need to transfer the amount in tokens from the msg.sender to this contract
-    //this contract will have the amount of in tokens
-    IERC20(_tokenIn).transferFrom(msg.sender, address(this), _amountIn);
+        //first we need to transfer the amount in tokens from the msg.sender to this contract
+        //this contract will have the amount of in tokens
+        IERC20(_tokenIn).transferFrom(msg.sender, address(this), _amountIn);
     
-    //next we need to allow the uniswapv2 router to spend the token we just sent to this contract
-    //by calling IERC20 approve you allow the uniswap contract to spend the tokens in this contract 
-    IERC20(_tokenIn).approve(PANCAKEV2ROUTER, _amountIn);
+        //next we need to allow the uniswapv2 router to spend the token we just sent to this contract
+        //by calling IERC20 approve you allow the uniswap contract to spend the tokens in this contract 
+        IERC20(_tokenIn).approve(PANCAKEV2ROUTER, _amountIn);
 
-    //path is an array of addresses.
-    //this path array will have 3 addresses [tokenIn, WBNB, tokenOut]
-    //the if statement below takes into account if token in or token out is WBNB.  then the path is only 2 addresses
-    address[] memory path;
-    if (_tokenIn == WBNB || _tokenOut == WBNB) {
-      path = new address[](2);
-      path[0] = _tokenIn;
-      path[1] = _tokenOut;
-    } else {
-      path = new address[](3);
-      path[0] = _tokenIn;
-      path[1] = WBNB;
-      path[2] = _tokenOut;
-    }
+        //path is an array of addresses.
+        //this path array will have 3 addresses [tokenIn, WBNB, tokenOut]
+        //the if statement below takes into account if token in or token out is WBNB.  then the path is only 2 addresses
+        address[] memory path;
+        if (_tokenIn == WBNB || _tokenOut == WBNB) {
+          path = new address[](2);
+          path[0] = _tokenIn;
+          path[1] = _tokenOut;
+        } else {
+          path = new address[](3);
+          path[0] = _tokenIn;
+          path[1] = WBNB;
+          path[2] = _tokenOut;
+        }
         //then we will call swapExactTokensForTokensSupportingFeeOnTransferTokens
         //for the deadline we will pass in block.timestamp
         //the deadline is the latest time the trade is valid for
@@ -214,7 +203,7 @@ contract DCApp{
        //this function will return the minimum amount from a swap
        //input the 3 parameters below and it will return the minimum amount out
        //this is needed for the swap function above
-     function getAmountOutMin(address _tokenIn, address _tokenOut, uint256 _amountIn) external view returns (uint256) {
+    function getAmountOutMin(address _tokenIn, address _tokenOut, uint256 _amountIn) external view returns (uint256) {
 
        //path is an array of addresses.
        //this path array will have 3 addresses [tokenIn, WBNB, tokenOut]
@@ -236,4 +225,3 @@ contract DCApp{
     }  
 
 }
-
