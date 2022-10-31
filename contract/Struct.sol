@@ -10,4 +10,6 @@ struct userData {
     uint amountPerOccurence;
     address tokenIn;
     address tokenOut;
+    uint tokenInLockedAmount;
+    uint tokenOutLockedAmount;
 }
