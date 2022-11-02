@@ -1,28 +1,11 @@
+@@ -1,278 +1,283 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.7;
 
 import "./Struct.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-/*
-interface IERC20 {
-    function totalSupply() external view returns (uint);
-    function balanceOf(address account) external view returns (uint);
-    function transfer(address recipient, uint amount) external returns (bool);
-    function allowance(address owner, address spender) external view returns (uint);
-    function approve(address spender, uint amount) external returns (bool);
-    function transferFrom(
-        address sender,
-        address recipient,
-        uint amount
-    ) external returns (bool);
-    event Transfer(address indexed from, address indexed to, uint value);
-    event Approval(address indexed owner, address indexed spender, uint value);
-}
-*/
-
 //import pancakeswap router
-
 interface IPancakeRouter01 {
     function factory() external pure returns (address);
     function WETH() external pure returns (address);
@@ -159,23 +142,20 @@ interface IPancakeRouter02 is IPancakeRouter01 {
 }
 
 //main contract
-
 contract DCApp{
 
-
-    mapping (address => userDCAData[]) public mapDCA;
+    mapping (address => mapping( uint => userDCAData)) public mapDCA;
     //address of the pancakeswap v2 router
     address private constant PANCAKEV2ROUTER = 0x10ED43C718714eb63d5aA57B78B54704E256024E;
 
     //address of WBNB token.  This is needed because some times it is better to trade through WBNB. 
     address private constant WBNB = 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c;
-    
 
     function swap(address _tokenIn, address _tokenOut, uint256 _amountIn, uint256 _amountOutMin, address _to) private {
       
         //first we need to transfer the amount in tokens from the msg.sender to this contract
         //this contract will have the amount of in tokens
-        IERC20(_tokenIn).transferFrom(msg.sender, address(this), _amountIn);
+        //IERC20(_tokenIn).transferFrom(msg.sender, address(this), _amountIn);
     
         //next we need to allow the uniswapv2 router to spend the token we just sent to this contract
         //by calling IERC20 approve you allow the uniswap contract to spend the tokens in this contract 
@@ -201,11 +181,11 @@ contract DCApp{
         IPancakeRouter02(PANCAKEV2ROUTER).swapExactTokensForTokensSupportingFeeOnTransferTokens(_amountIn, _amountOutMin, path, _to, block.timestamp);
     }
     
+       
+    function getAmountOutMin(address _tokenIn, address _tokenOut, uint256 _amountIn) private view returns (uint256) {
        //this function will return the minimum amount from a swap
        //input the 3 parameters below and it will return the minimum amount out
        //this is needed for the swap function above
-    function getAmountOutMin(address _tokenIn, address _tokenOut, uint256 _amountIn) private view returns (uint256) {
-
        //path is an array of addresses.
        //this path array will have 3 addresses [tokenIn, WBNB, tokenOut]
        //the if statement below takes into account if token in or token out is WBNB.  then the path is only 2 addresses
@@ -225,22 +205,31 @@ contract DCApp{
         return amountOutMins[path.length -1];  
     }  
 
-    function addNewDCAToUser(uint _frequency, uint _totalOccurences, uint _amountPerOccurrence, address _tokenIn, address _tokenOut) external {
-        //Add a DCA to the user and lock the necessary funds on the contract
+    function addNewDCAToUser(uint _period, uint _totalOccurences, uint _amountPerOccurrence, address _tokenIn, address _tokenOut)
+                 external returns (uint) {
+        //Add a DCA to the calling user and lock the necessary funds on the contract
         //The funds can be unlocked at all time be cancelling the DCA
         //TODO :
-        // - Security check
-        // - Take the tokenIn funds into the contract
-        //      - Call the tokenIn contract to do the transfer to this contract
+        // - Security checks
 
         //Transfer the tokens to this contract
-        IERC20(_tokenIn).transferFrom(msg.sender, address(this), _totalOccurences * _amountPerOccurrence);
+        uint timestamp = block.timestamp;
+        
+        require(_period > 0, "Error: DCA Period must be greater than 0");
+        require(mapDCA[msg.sender][timestamp].periodDays == 0, "Error: Retry in a few seconds");
+        
         //Register the DCA for this user
-        mapDCA[msg.sender].push(  userDCAData(_frequency, _totalOccurences, 0, block.timestamp, _amountPerOccurrence, _tokenIn, _tokenOut,
-                                    _totalOccurences * _amountPerOccurrence, 0) );
+        mapDCA[msg.sender][timestamp] = userDCAData(_period, _totalOccurences, 0, _amountPerOccurrence, _tokenIn, _tokenOut,
+                                                    _totalOccurences * _amountPerOccurrence, 0);
+
+        IERC20(_tokenIn).transferFrom(msg.sender, address(this), _totalOccurences * _amountPerOccurrence);
+        
+        
+
+        return timestamp;
     }
 
-    function deleteUserDCA(address user, uint _startDate) public {
+    function deleteUserDCA(uint _startDate) public {
         /*Delete a DCA to free the storage and earn back gas
             Transfer back to the user the remaining amount 
             TODO : 
@@ -249,27 +238,13 @@ contract DCApp{
              - Transfer the funds back to the user
             Should be deletable by :
                 -The user at any time
-                -Anyone if the DCA has been completed (?)
         */ 
 
-        //Find the right DCA to delete by looking at the startDate
-        uint indexToDelete = findDCAByStartDate(user, _startDate);
-
-        //Save key information before deleting
-        userDCAData[] memory userDCAs = mapDCA[user];
-        uint tokenInLockedAmount = userDCAs[indexToDelete].tokenInLockedAmount;
-        uint tokenOutLockedAmount = userDCAs[indexToDelete].tokenOutLockedAmount;
-        address tokenIn = userDCAs[indexToDelete].tokenIn;
-        address tokenOut = userDCAs[indexToDelete].tokenOut;
-
-        //The array does not need to be ordered, so we can juste put the last element at the
-        // id to be deleted, then pop() the array to free space
-        mapDCA[user][indexToDelete] = userDCAs[userDCAs.length - 1];
-        mapDCA[user].pop();
-
-        //Transfer back the remaining locked funds of the initial token
-        IERC20(tokenIn).transfer(user, tokenInLockedAmount);
-        IERC20(tokenOut).transfer(user, tokenOutLockedAmount);
+        userDCAData memory userDCA = mapDCA[msg.sender][_startDate];
+        require(userDCA.periodDays > 0, "Error: This DCA does not exist");
+        delete mapDCA[msg.sender][_startDate];
+        IERC20(userDCA.tokenIn).transfer(msg.sender, userDCA.tokenInLockedAmount);
+        IERC20(userDCA.tokenOut).transfer(msg.sender, userDCA.tokenOutLockedAmount);
 
     }
 
@@ -282,32 +257,28 @@ contract DCApp{
 
             Steps :
              - Security checks
-               - The msg.sender address need to be ours
-               - The current date must be around startDate + frequency * currentOccurence +- margin (maybe a margin of about an hour or so)
+               - The msg.sender address need to be ours (?)
+               - The current date must be around startDate + period * currentOccurence +- margin (maybe a margin of about an hour or so)
                - The currentOccurence number should be lower than the totalOccurence 
              - Modify the userDCAData state to reflect the operation (need to do it 1st to avoir re-entrency attacks)
              - Swap the defined amount of tokens with the swap() function
         */
-    }
+        userDCAData memory userDCA = mapDCA[user][DCAStartDate];
 
-    function findDCAByStartDate(address user, uint DCAStartDate) private view returns (uint256)  {
-        /*  
-            Find the DCA for an user
-            Return the index of the first one, as they should be unique
-            In the case where two DCA got the same startDate, the second one in the array won't be 
-                accessible until the first one is deleted
-            As such, it doesn't represent a problem, as an ordinary user shouldn't face this problem
-        */
+        require(userDCA.periodDays > 0, "Error: This DCA does not exist");
+        require(userDCA.totalOccurences > userDCA.currentOccurence, "Error: DCA has already been completed, the user has to retrieve its tokens");
+        require(block.timestamp > DCAStartDate + userDCA.periodDays * 86400 * (userDCA.currentOccurence + 1) - 1800, "Error: Too soon to execute this DCA");
 
-        uint indexToDelete;
-        userDCAData[] memory userDCADataMemory = mapDCA[user];
+        mapDCA[user][DCAStartDate].currentOccurence = userDCA.currentOccurence + 1;
 
-        for (uint i = 0; i< userDCADataMemory.length; i++) {
-            if (userDCADataMemory[i].startDate == DCAStartDate ) {
-                return indexToDelete;
-            }
-        }
-        revert("No DCA started at that date");
-    }
+        uint amountOut = getAmountOutMin(userDCA.tokenIn, userDCA.tokenOut, userDCA.amountPerOccurence);
+
+        mapDCA[user][DCAStartDate].tokenInLockedAmount = userDCA.tokenInLockedAmount - userDCA.amountPerOccurence;
+        mapDCA[user][DCAStartDate].tokenOutLockedAmount = userDCA.tokenOutLockedAmount + amountOut;
+
+        swap(userDCA.tokenIn, userDCA.tokenOut, userDCA.amountPerOccurence, amountOut, address(this));
+
+       
+    }   
 
 }
