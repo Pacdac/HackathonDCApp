@@ -22,10 +22,6 @@ export async function addNewDCAToUser(period, totalOccurences, amountPerOccurren
 
     const BigNumberAmountPerOccurrence = ethers.utils.parseUnits(amountPerOccurrence.toString(), decimalsTokenIn);
     
-
-    
-
-
     let value = 0;
     if(tokenIn === "0x0000000000000000000000000000000000000000") {
         value = BigNumberAmountPerOccurrence.mul(totalOccurences);
