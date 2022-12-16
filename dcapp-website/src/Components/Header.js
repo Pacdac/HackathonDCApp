@@ -18,7 +18,6 @@ function Header(){
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" />
 
             <title>PandExchange</title>
-            <link rel="icon" type="image/png" href="./assets/img/logo.png" />
         </>
     )
 }

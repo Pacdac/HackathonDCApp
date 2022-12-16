@@ -21,7 +21,7 @@ function Navbar(props){
               direction={{xs: "column", md: "row"}}
             >
                 <Grid item md={9}>
-                    <img src="/images/logo.png" className="logo" />
+                    <img src="/images/logo.png" className="logo" height="60px" />
                 </Grid>
 
                 <Grid item md={1} >
