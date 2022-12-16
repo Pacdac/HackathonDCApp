@@ -1046,13 +1046,22 @@ function merge(...arrays) {
 }
 
 const TokenSelector = (props) => {
+    let fullAssets = Assets;
+    const [searchInput, setSearchInput] = useState('');
+    const [foundTokens, setfoundTokens] = useState(fullAssets);
+    const [showModal, setShowModal] = React.useState(false);
+    const modalRef = useRef();
+        useOnClickOutside(modalRef, () => setShowModal(false));
+
+        const [selectedTokenSymbol, setSelectedTokenSymbol] = useState("select token");
+        const [selectedTokenImageURL, setSelectedTokenImageURL] = useState("/images/logo.png");
+
     if (typeof window !== 'undefined') {
-        let fullAssets = Assets;
+        
         if (localStorage.getItem("local-tokens") !== null) {
             fullAssets = merge(JSON.parse(localStorage.getItem("local-tokens")), Assets);
         }
-        const [searchInput, setSearchInput] = useState('');
-        const [foundTokens, setfoundTokens] = useState(fullAssets);
+        
         const filter = async (e) => {
             const keyword = e.target.value;
 
@@ -1094,15 +1103,7 @@ const TokenSelector = (props) => {
                 // If the text field is empty, show all tokens
             }
             setSearchInput(keyword);
-        };
-
-
-        const [showModal, setShowModal] = React.useState(false);
-        const modalRef = useRef();
-        useOnClickOutside(modalRef, () => setShowModal(false));
-
-        const [selectedTokenSymbol, setSelectedTokenSymbol] = useState("select token");
-        const [selectedTokenImageURL, setSelectedTokenImageURL] = useState("/images/logo.png");        
+        };    
 
         return (
             <div>
@@ -1190,7 +1191,7 @@ const TokenSelector = (props) => {
                                         setSelectedTokenImageURL(wallet.image);
                                         props.setToken(wallet.address);
                                         if (props.setDecimals){
-                                            props.setDecimals(asset.decimals);
+                                            props.setDecimals(wallet.decimals);
                                         }
                                         if (wallet.custom !== undefined){
                                             const items = JSON.parse(localStorage.getItem("local-tokens"));

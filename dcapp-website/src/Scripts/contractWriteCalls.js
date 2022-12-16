@@ -1,8 +1,8 @@
 
 import { ethers } from "ethers";
-import { contractAddress } from "../data/ContractAddress";
-import contractABI from "../data/ContractABI";
-import ERC20ABI from "../data/ERC20ABI";
+import { contractAddress } from "../Data/ContractAddress";
+import contractABI from "../Data/ContractABI";
+import ERC20ABI from "../Data/ERC20ABI";
 
 export async function addNewDCAToUser(period, totalOccurences, amountPerOccurrence, tokenIn, tokenInDecimals, tokenOut, fee5Decimals) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);

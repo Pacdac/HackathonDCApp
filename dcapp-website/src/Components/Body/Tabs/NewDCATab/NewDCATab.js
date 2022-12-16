@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Paper, Grid, Slider, TextField, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import TokenSelector from './TokenSelector';
-import { addNewDCAToUser } from "../../../../scripts/contractWriteCalls";
+import { addNewDCAToUser } from '../../../../Scripts/contractWriteCalls';
 
 function NewDCATab(){
 
