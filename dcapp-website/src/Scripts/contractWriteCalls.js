@@ -55,3 +55,11 @@ export async function gasPrice() {
     const gasPrice = await provider.getGasPrice();
     return gasPrice;
 }
+
+export async function deleteUserDCA(DCACreationTimestamp) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+    const tx = await contract.deleteUserDCA(DCACreationTimestamp);
+    await tx.wait();
+}
