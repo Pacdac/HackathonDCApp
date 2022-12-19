@@ -48,7 +48,7 @@ function NewDCATab(){
             >
                 <Paper
                     elevation={3}
-                    style={{ margin: "auto", padding: "20px", backgroundColor: "#EADEFF" }}
+                    style={{ margin: "auto", padding: "20px" }}
                 >
 
                     <Grid

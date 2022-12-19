@@ -108,7 +108,7 @@ export default function PoolElement(props) {
                                         <TableCell>{parseInt(row.currentOccurrence) + 1}</TableCell>
                                         <TableCell align="right">{row.tokenInAmount}</TableCell>
                                         <TableCell align="right">
-                                            {row.fee5Decimals}
+                                            {row.fee5Decimals / 1000}%
                                         </TableCell>
                                     </TableRow>
                                 </TableBody>
