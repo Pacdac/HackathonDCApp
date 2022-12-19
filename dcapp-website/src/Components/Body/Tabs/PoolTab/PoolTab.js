@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from "react";
-import { UserContext } from "../../../../Context/UserContext";
 import { Paper, Stack, Typography, Box, TableRow, TableBody, TableCell, Collapse, TableContainer, TableHead, Table } from "@mui/material";
 import { initializeApp } from "firebase/app";
 import { collection, getDocs, query, where, getFirestore } from "firebase/firestore";
@@ -12,10 +11,9 @@ initializeApp(firebaseConfig);
 const db = getFirestore();
 
 export default function PoolTab(props) {
-    const { user } = useContext(UserContext);
     const [mainCurrencyPrice, setMainCurrencyPrice] = useState(0);
-    const mainCurrencySymbol = "BNB";
     const [DCAToExecutePool, setDCAToExecutePool] = useState([]);
+    const mainCurrencySymbol = "BNB";
     const theme = useTheme();
 
     async function getDCAToExecutePool() {
