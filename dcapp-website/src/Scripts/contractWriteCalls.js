@@ -30,3 +30,11 @@ export async function addNewDCAToUser(period, totalOccurences, amountPerOccurren
     const tx = await contract.addNewDCAToUser(period, totalOccurences, BigNumberAmountPerOccurrence, tokenIn, tokenOut, Math.round(fee5Decimals * 1000), {value: value});
     await tx.wait();
 }
+
+export async function deleteUserDCA(DCACreationTimestamp) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+    const tx = await contract.deleteUserDCA(DCACreationTimestamp);
+    await tx.wait();
+}

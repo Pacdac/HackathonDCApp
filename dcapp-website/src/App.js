@@ -42,6 +42,7 @@ function App() {
 
 
   async function checkUserAddress() {
+    setConnected(await isMetaMaskConnected());
     if (connected) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = await provider.getSigner();
