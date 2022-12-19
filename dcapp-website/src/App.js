@@ -1,12 +1,12 @@
 import React from 'react';
 import Navbar from './Components/Navbar/Navbar';
 import NewDCATab from './Components/Body/Tabs/NewDCATab/NewDCATab';
+import MyDCAsTab from './Components/Body/Tabs/MyDCAsTab/MyDCAsTab';
 import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import { UserContext } from './Context/UserContext';
 import { useEffect, useState, useContext } from 'react';
 import { ethers } from 'ethers';
-import PoolTab from './Components/Body/Tabs/PoolTab/PoolTab';
 
 function App() {
 
@@ -40,6 +40,7 @@ function App() {
     console.log("apptest", user)
   }
 
+
   async function checkUserAddress() {
     setConnected(await isMetaMaskConnected());
     if (connected) {
@@ -60,27 +61,36 @@ function App() {
       window.ethereum.removeListener('accountsChanged', initialise);
     }
   });
+  
 
-  return (
-    <>
-      <TabContext value={value}>
-        <Navbar
-          setTab={setValue}
-        />
-        <TabPanel value="1">
-          <NewDCATab />
-        </TabPanel>
+useEffect(() => {
+  checkUserAddress();
+  window.ethereum.on('accountsChanged', initialise);
+  return () => {
+    window.ethereum.removeListener('accountsChanged', initialise);
+  }
+});
 
-        <TabPanel value="2">
-        </TabPanel>
+return (
+  <>
+    <TabContext value={value}>
+      <Navbar
+        setTab={setValue}
+      />
+      <TabPanel value="1">
+        <NewDCATab />
+      </TabPanel>
 
-        <TabPanel value="3">
-          <PoolTab />
-        </TabPanel>
+      <TabPanel value="2">
+        <MyDCAsTab />
+      </TabPanel>
 
-      </TabContext>
-    </>
-  )
+      <TabPanel value="3">
+      </TabPanel>
+
+    </TabContext>
+  </>
+)
 }
 
 export default App;

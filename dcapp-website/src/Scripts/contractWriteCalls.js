@@ -22,10 +22,6 @@ export async function addNewDCAToUser(period, totalOccurences, amountPerOccurren
 
     const BigNumberAmountPerOccurrence = ethers.utils.parseUnits(amountPerOccurrence.toString(), decimalsTokenIn);
     
-
-    
-
-
     let value = 0;
     if(tokenIn === "0x0000000000000000000000000000000000000000") {
         value = BigNumberAmountPerOccurrence.mul(totalOccurences);
@@ -58,4 +54,12 @@ export async function gasPrice() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const gasPrice = await provider.getGasPrice();
     return gasPrice;
+}
+
+export async function deleteUserDCA(DCACreationTimestamp) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+    const tx = await contract.deleteUserDCA(DCACreationTimestamp);
+    await tx.wait();
 }

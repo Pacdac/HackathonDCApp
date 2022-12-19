@@ -1,5 +1,5 @@
 import useOnClickOutside from '../../../../hooks/useOnClickoutside';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import urlExist from "url-exist"
 import styled from 'styled-components';
 
