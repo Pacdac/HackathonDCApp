@@ -7,6 +7,7 @@ import TabPanel from '@mui/lab/TabPanel';
 import { UserContext } from './Context/UserContext';
 import { useEffect, useState, useContext } from 'react';
 import { ethers } from 'ethers';
+import PoolTab from './Components/Body/Tabs/PoolTab/PoolTab';
 
 function App() {
 
@@ -86,6 +87,7 @@ return (
       </TabPanel>
 
       <TabPanel value="3">
+        <PoolTab />
       </TabPanel>
 
     </TabContext>
