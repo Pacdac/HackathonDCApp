@@ -1,8 +1,8 @@
 import React from 'react';
-import { Box, Paper, Grid, Slider, TextField, Button } from '@mui/material';
+import { Box, Paper, Grid, Slider, TextField, Button, Typography, Link } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import TokenSelector from './TokenSelector';
-import { addNewDCAToUser } from '../../../../Scripts/contractWriteCalls';
+import { addNewDCAToUser, approveTokenTransfer } from '../../../../Scripts/contractWriteCalls';
 
 function NewDCATab(){
 
@@ -34,6 +34,10 @@ function NewDCATab(){
 
     const newDCA = async () => {
         await addNewDCAToUser(period, totalOccurences, amountPerOccurrence, tokenIn, tokenInDecimals, tokenOut, fee5Decimals);
+    }
+
+    const approveTokenIn = async () => {
+        await approveTokenTransfer(tokenIn, amountPerOccurrence * totalOccurences, tokenInDecimals);
     }
 
     return (
@@ -103,6 +107,11 @@ function NewDCATab(){
                             />
                         </Grid>
                         <Grid item>
+                            <Button onClick={approveTokenIn} variant="contained">
+                                Approve Token In
+                            </Button>
+                        </Grid>
+                        <Grid item>
                             Token Out
                             <TokenSelector
                                 setToken={setTokenOut}
@@ -122,6 +131,14 @@ function NewDCATab(){
                             <Button onClick={newDCA} variant="contained">
                                 Add New DCA
                             </Button>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="h6">
+                                Disclaimer - This is a beta version of the DCA app on Mumbai Testnet. Because there is not a lot of liquidity pools on the exchange, you cannot create a DCA between most ERC20 unless you supply the pools yourself. To test you can use the following exchange: DBG to LINK.
+                            </Typography>
+                            <Link href="https://mumbai.polygonscan.com/address/0x689e375AFe23a0B0F05353a911DeeE62A879d0a9#writeContract" target="_blank" rel="noopener">
+                                You can mint DBG here
+                            </Link>
                         </Grid>
                     </Grid>
                 </Paper>

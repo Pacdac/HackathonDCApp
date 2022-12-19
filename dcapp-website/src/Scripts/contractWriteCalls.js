@@ -63,3 +63,12 @@ export async function deleteUserDCA(DCACreationTimestamp) {
     const tx = await contract.deleteUserDCA(DCACreationTimestamp);
     await tx.wait();
 }
+
+export async function approveTokenTransfer(tokenAddress, amount, decimalsTokenIn) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(tokenAddress, ERC20ABI, signer);
+    const BigNumberAmount = ethers.utils.parseUnits(amount.toString(), decimalsTokenIn);
+    const tx = await contract.approve(contractAddress, BigNumberAmount);
+    await tx.wait();
+}
