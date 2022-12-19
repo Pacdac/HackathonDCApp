@@ -1,9 +1,71 @@
-import { useEffect, useContext } from 'react'
+import { useEffect, useContext, useState } from 'react'
 import { UserContext } from '../../Context/UserContext'
 
 import { Button } from '@mui/material'
 
+const networks = {
+  polygon: {
+    chainId: `0x${Number(80001).toString(16)}`,
+    chainName: "Polygon Mumbai Testnet",
+    nativeCurrency: {
+      name: "MATIC",
+      symbol: "MATIC",
+      decimals: 18
+    },
+    rpcUrls: ["https://matic-testnet-archive-rpc.bwarelabs.com"],
+    blockExplorerUrls: ["https://mumbai.polygonscan.com"]
+  },
+  bsc: {
+    chainId: `0x${Number(97).toString(16)}`,
+    chainName: "Binance Smart Chain Testnet",
+    nativeCurrency: {
+      name: "Binance Chain Native Token",
+      symbol: "BNB",
+      decimals: 18
+    },
+    rpcUrls: ["https://data-seed-prebsc-2-s1.binance.org:8545"],
+    blockExplorerUrls: ["https://testnet.bscscan.com"]
+  }
+};
+
+const changeNetwork = async ({ networkName, setError }) => {
+  try {
+    if (!window.ethereum) throw new Error("No crypto wallet found");
+    await window.ethereum.request({
+      method: "wallet_addEthereumChain",
+      params: [
+        {
+          ...networks[networkName]
+        }
+      ]
+    });
+  } catch (err) {
+    setError(err.message);
+  }
+};
+
+
 function ConnectWalletButton() {
+  const [error, setError] = useState();
+
+  const handleNetworkSwitch = async (networkName) => {
+    setError();
+    await changeNetwork({ networkName, setError });
+  };
+
+  const networkChanged = (chainId) => {
+    console.log({ chainId });
+  };
+
+  useEffect(() => {
+    window.ethereum.on("chainChanged", networkChanged);
+
+    return () => {
+      window.ethereum.removeListener("chainChanged", networkChanged);
+    };
+  }, []);
+
+
   const { user, setUser } = useContext(UserContext)
 
 
@@ -20,6 +82,18 @@ function ConnectWalletButton() {
     <>
       <Button variant="contained" onClick={connectWallet}>
         Connect Wallet
+      </Button>
+      <Button
+        onClick={() => handleNetworkSwitch("polygon")}
+        className="mt-2 mb-2 btn btn-primary submit-button focus:ring focus:outline-none w-full"
+      >
+        Switch to Polygon
+      </Button>
+      <Button
+        onClick={() => handleNetworkSwitch("bsc")}
+        className="mt-2 mb-2 bg-warning border-warning btn submit-button focus:ring focus:outline-none w-full"
+      >
+        Switch to BSC
       </Button>
     </>
   )
