@@ -20,7 +20,7 @@ const networks = {
     chainName: "Binance Smart Chain Testnet",
     nativeCurrency: {
       name: "Binance Chain Native Token",
-      symbol: "BNB",
+      symbol: "tBNB",
       decimals: 18
     },
     rpcUrls: ["https://data-seed-prebsc-2-s1.binance.org:8545"],
@@ -82,18 +82,6 @@ function ConnectWalletButton() {
     <>
       <Button variant="contained" onClick={connectWallet}>
         Connect Wallet
-      </Button>
-      <Button
-        onClick={() => handleNetworkSwitch("polygon")}
-        className="mt-2 mb-2 btn btn-primary submit-button focus:ring focus:outline-none w-full"
-      >
-        Switch to Polygon
-      </Button>
-      <Button
-        onClick={() => handleNetworkSwitch("bsc")}
-        className="mt-2 mb-2 bg-warning border-warning btn submit-button focus:ring focus:outline-none w-full"
-      >
-        Switch to BSC
       </Button>
     </>
   )

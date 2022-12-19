@@ -5,16 +5,8 @@ import { getFirestore, collection, query, getDocs, doc, where, orderBy } from "f
 import { Box, Paper, TableRow, TableBody, TableCell, Collapse, TableContainer, TableHead, Table } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import DCABox from './DCABox';
+import { firebaseConfig } from "../../../../Data/fireBaseConfig";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyCcF0zTiJyFbag3O5Hn81qrODnxBBsKQ14",
-    authDomain: "fir-test-4c4bf.firebaseapp.com",
-    projectId: "fir-test-4c4bf",
-    storageBucket: "fir-test-4c4bf.appspot.com",
-    messagingSenderId: "695521795062",
-    appId: "1:695521795062:web:fd948f638e5ac785ee85d7",
-    measurementId: "G-3D06MLMCNK"
-};
 
 initializeApp(firebaseConfig);
 const db = getFirestore();
@@ -32,7 +24,7 @@ const MyDCAsTab = () => {
         const moralisCollectionRef = collection(db, "moralis");
         const eventsDocRef = doc(moralisCollectionRef, "events");
         const DCACreationCollectionRef = collection(eventsDocRef, "DcappTestnetCreation");
-        const q = query(DCACreationCollectionRef, where("userAddress", "==", userAddress.toLowerCase()), orderBy("DCACreationTimestamp", "desc"));
+        const q = query(DCACreationCollectionRef, where("userAddress", "==", userAddress.toLowerCase()), where("chainId", "==", 80001), orderBy("DCACreationTimestamp", "desc"));
         await getDocs(q).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 myDCAs.push(doc);

@@ -19,7 +19,7 @@ export default function PoolTab(props) {
     async function getDCAToExecutePool() {
         let DCAToExecutePoolSnapshot = [];
         const OccurrenceToExecuteCollectionRef = collection(db, "OccurrencesToExecute");
-        const q = query(OccurrenceToExecuteCollectionRef, where("nextOccurrenceTimestamp", "<=", Date.now()));
+        const q = query(OccurrenceToExecuteCollectionRef, where("nextOccurrenceTimestamp", "<=", Date.now()), where("chainId", "==", 80001));
         await getDocs(q).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 DCAToExecutePoolSnapshot.push(doc);

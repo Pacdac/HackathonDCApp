@@ -1,5 +1,78 @@
 export const tokenListJSON = [
     {
+        name: "ChaninLink Token",
+        symbol: "LINK",
+        address: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
+        chainId: 80001,
+        decimals: 18,
+        image: "https://tokens.pancakeswap.finance/images/0xF8A0BF9cF54Bb92F17374d9e9A321E6a111a51bD.png"
+    },
+    {
+        name: "Polygon",
+        symbol: "MATIC",
+        address: "0x0000000000000000000000000000000000000000",
+        chainId: 80001,
+        decimals: 18,
+        image: "https://assets.coingecko.com/coins/images/4713/thumb/matic-token-icon.png?1548387196"
+    },
+    {
+        name: "DungeonsAndBattlesGold",
+        symbol: "DBG",
+        address: "0x689e375AFe23a0B0F05353a911DeeE62A879d0a9",
+        chainId: 80001,
+        decimals: 18,
+        image: "https://assets.coingecko.com/coins/images/22999/thumb/ITAVulj.png?1658825285"
+    }
+];
+
+export const commonTokenListJSON = [
+    {
+        name: "Polygon",
+        symbol: "MATIC",
+        address: "0x0000000000000000000000000000000000000000",
+        chainId: 80001,
+        decimals: 18,
+        image: "https://assets.coingecko.com/coins/images/4713/thumb/matic-token-icon.png?1548387196"
+    },
+];
+
+export const commonTokenListJSONBSC = [
+    {
+        name: "BNB",
+        symbol: "BNB",
+        address: "0x0000000000000000000000000000000000000000",
+        chainId: 56,
+        decimals: 18,
+        image: "https://raw.githubusercontent.com/pancakeswap/token-list/main/lists/images/symbol/bnb.png"
+    },
+    {
+        name: "Tether",
+        symbol: "USDT",
+        address: "0x55d398326f99059ff775485246999027b3197955",
+        chainId: 56,
+        decimals: 18,
+        image: "https://raw.githubusercontent.com/pancakeswap/token-list/main/lists/images/symbol/usdt.png"
+    },
+    {
+        name: "Binance USD",
+        symbol: "BUSD",
+        address: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+        chainId: 56,
+        decimals: 18,
+        image: "https://assets.coingecko.com/coins/images/9576/thumb/BUSD.png?1568947766"
+    },
+    {
+        name: "USD Coin",
+        symbol: "USDC",
+        address: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+        chainId: 56,
+        decimals: 18,
+        image: "https://assets.coingecko.com/coins/images/6319/thumb/USD_Coin_icon.png?1547042389"
+    },
+];
+
+export const tokenListJSONBSC = [
+    {
         name: "TEST BUSD",
         symbol: "BUSD",
         address: "0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee",
@@ -373,14 +446,6 @@ export const tokenListJSON = [
         chainId: 56,
         decimals: 18,
         image: "https://tokens.pancakeswap.finance/images/0x762539b45A1dCcE3D36d080F74d1AED37844b878.png"
-    },
-    {
-        name: "ChainLink Token",
-        symbol: "LINK",
-        address: "0xF8A0BF9cF54Bb92F17374d9e9A321E6a111a51bD",
-        chainId: 56,
-        decimals: 18,
-        image: "https://tokens.pancakeswap.finance/images/0xF8A0BF9cF54Bb92F17374d9e9A321E6a111a51bD.png"
     },
     {
         name: "Mask Network",

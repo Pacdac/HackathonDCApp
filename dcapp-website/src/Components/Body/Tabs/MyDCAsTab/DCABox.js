@@ -6,6 +6,7 @@ import { getFirestore, collection, query, getDocs, where } from "firebase/firest
 import { utils } from 'ethers';
 import { getTokenFromAddress } from "../../../../Scripts/utils";
 import { deleteUserDCA } from "../../../../Scripts/contractWriteCalls";
+import { firebaseConfig } from "../../../../Data/fireBaseConfig";
 
 
 const DCABox = (props) => {
@@ -15,16 +16,6 @@ const DCABox = (props) => {
     const creationDate = new Date(DCAdata.DCACreationTimestamp * 1000).toLocaleString();
     const endDate = new Date((parseInt(DCAdata.DCACreationTimestamp) + parseInt(DCAdata.period) * parseInt(DCAdata.totalOccurrence) * 24 * 60 * 60) * 1000).toLocaleString();
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyCcF0zTiJyFbag3O5Hn81qrODnxBBsKQ14",
-        authDomain: "fir-test-4c4bf.firebaseapp.com",
-        projectId: "fir-test-4c4bf",
-        storageBucket: "fir-test-4c4bf.appspot.com",
-        messagingSenderId: "695521795062",
-        appId: "1:695521795062:web:fd948f638e5ac785ee85d7",
-        measurementId: "G-3D06MLMCNK"
-    };
-
     initializeApp(firebaseConfig);
     const db = getFirestore();
 
@@ -32,7 +23,7 @@ const DCABox = (props) => {
     const [DCACurrentOccurrence, setDCACurrentOccurrence] = useState(0);
     async function getDCACurrentOccurrence() {
         const OccurrenceToExecuteCollectionRef = collection(db, "OccurrencesToExecute");
-        const q = query(OccurrenceToExecuteCollectionRef, where("DCACreationTimestamp", "==", DCAdata.DCACreationTimestamp), where("userAddress", "==", user.toLowerCase()));
+        const q = query(OccurrenceToExecuteCollectionRef, where("DCACreationTimestamp", "==", DCAdata.DCACreationTimestamp), where("userAddress", "==", user.toLowerCase()), where("chainId", "==", 80001));
         await getDocs(q).then((querySnapshot) => {
             let currentOccurrence = 0;
             querySnapshot.forEach((doc) => {

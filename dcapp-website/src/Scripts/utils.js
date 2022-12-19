@@ -7,6 +7,10 @@ export function getTokenFromAddress(address) {
 
 export async function getTokenPriceInEUR(symbol) {
     const response = await axios.get(`https://api.binance.com/api/v3/avgPrice?symbol=${symbol}EUR`);
+    if (response.data.price === undefined) {
+        console.log("Price not found");
+        return 0;
+    }
     return response.data.price;
 }
 
